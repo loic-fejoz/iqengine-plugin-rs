@@ -23,7 +23,7 @@ pub struct SamplesCloud {
     #[serde(rename = "byte_length", skip_serializing_if = "Option::is_none")]
     pub byte_length: Option<i32>,
     #[serde(rename = "data_type")]
-    pub data_type: crate::models::DataType,
+    pub data_type: crate::server::DataType,
     #[serde(rename = "sample_rate", skip_serializing_if = "Option::is_none")]
     pub sample_rate: Option<f32>,
     #[serde(rename = "center_freq", skip_serializing_if = "Option::is_none")]
@@ -35,7 +35,7 @@ impl SamplesCloud {
         account_name: String,
         container_name: String,
         file_path: String,
-        data_type: crate::models::DataType,
+        data_type: crate::server::DataType,
     ) -> SamplesCloud {
         SamplesCloud {
             account_name,

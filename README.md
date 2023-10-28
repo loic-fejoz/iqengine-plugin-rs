@@ -24,7 +24,7 @@ openapi = { path = "./openapi" }
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost*
+All URIs are relative to */plugins*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -39,9 +39,9 @@ Class | Method | HTTP request | Description
  - [DataType](docs/DataType.md)
  - [FunctionNameGet200Response](docs/FunctionNameGet200Response.md)
  - [FunctionNameGet200ResponseCustomParamsValue](docs/FunctionNameGet200ResponseCustomParamsValue.md)
- - [FunctionNameGet200ResponseCustomParamsValueType](docs/FunctionNameGet200ResponseCustomParamsValueType.md)
  - [FunctionNamePost200Response](docs/FunctionNamePost200Response.md)
  - [FunctionNamePostRequest](docs/FunctionNamePostRequest.md)
+ - [FunctionNamePostRequestAdditionalProperties](docs/FunctionNamePostRequestAdditionalProperties.md)
  - [SamplesB64](docs/SamplesB64.md)
  - [SamplesCloud](docs/SamplesCloud.md)
 
