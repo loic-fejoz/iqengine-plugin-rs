@@ -48,20 +48,20 @@ impl Default for FunctionParamsBuilder {
 impl FunctionParamsBuilder {
     pub fn new() -> FunctionParamsBuilder {
         let custom_params = HashMap::<String, FunctionParameterDescription>::new();
-        let mut result = FunctionParamsBuilder {
+        FunctionParamsBuilder {
             params: FunctionParameters::new(custom_params),
-        };
+        }
         // result.params.max_inputs = Some(1);
         // result.params.max_outputs = Some(1);
-        result
+        // result
     }
 
-    pub fn max_inputs(mut self, _max_inputs: i32) -> Self {
+    pub fn max_inputs(self, _max_inputs: i32) -> Self {
         // self.params.max_inputs = Some(max_inputs);
         self
     }
 
-    pub fn max_outputs(mut self, _max_outputs: i32) -> Self {
+    pub fn max_outputs(self, _max_outputs: i32) -> Self {
         // self.params.max_outputs = Some(max_outputs);
         self
     }

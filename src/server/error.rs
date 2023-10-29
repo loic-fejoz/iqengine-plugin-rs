@@ -22,11 +22,19 @@ pub enum IQEngineError {
     AzureError(azure_core::error::Error),
     #[error("JSON De/Serialization error")]
     SerdeJsonError(serde_json::Error),
+    #[error("Hound error")]
+    HoundError(hound::Error),
 }
 
 impl From<anyhow::Error> for IQEngineError {
     fn from(value: anyhow::Error) -> Self {
         IQEngineError::FutureSDRError(value)
+    }
+}
+
+impl From<hound::Error> for IQEngineError {
+    fn from(value: hound::Error) -> Self {
+        IQEngineError::HoundError(value)
     }
 }
 

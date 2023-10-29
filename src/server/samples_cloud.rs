@@ -1,4 +1,3 @@
-use azure_core::error::{ErrorKind, ResultExt};
 use azure_storage::prelude::*;
 use azure_storage_blobs::prelude::*;
 use futures::stream::StreamExt;
@@ -51,13 +50,14 @@ impl SamplesCloud {
     pub async fn sigmf(&self) -> Result<Value, IQEngineError> {
         let account = self.account_name.clone();
         let container = self.container_name.clone();
-        let blob_name = self.file_path.clone() + ".sigmf-data"; 
+        let blob_name = self.file_path.clone() + ".sigmf-data";
         let storage_credentials = if let Some(sas_token) = self.sas_token.clone() {
             StorageCredentials::sas_token(sas_token)?
         } else {
             StorageCredentials::anonymous()
         };
-        let blob_client = ClientBuilder::new(account, storage_credentials).blob_client(&container, blob_name);
+        let blob_client =
+            ClientBuilder::new(account, storage_credentials).blob_client(&container, blob_name);
         let mut result: Vec<u8> = vec![];
 
         println!("Ready to download sigmf-data file...");

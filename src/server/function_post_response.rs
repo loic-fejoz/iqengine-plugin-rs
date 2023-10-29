@@ -23,8 +23,20 @@ impl FunctionPostResponse {
     }
 }
 
+impl Default for FunctionPostResponse {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct FunctionPostResponseBuilder {
     resp: FunctionPostResponse,
+}
+
+impl Default for FunctionPostResponseBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl FunctionPostResponseBuilder {
@@ -45,6 +57,6 @@ impl FunctionPostResponseBuilder {
     }
 
     pub fn build(self) -> FunctionPostResponse {
-        return self.resp;
+        self.resp
     }
 }

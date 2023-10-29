@@ -1,10 +1,6 @@
 use std::path::Path;
 
-use base64::{
-    alphabet,
-    engine::{self, general_purpose},
-    Engine as _,
-};
+use base64::{engine::general_purpose, Engine as _};
 use num_complex::{Complex, Complex32, ComplexFloat};
 
 use super::error::IQEngineError;
@@ -41,7 +37,7 @@ impl SamplesB64 {
             .array_chunks::<4>()
             .map(|a| f32::from_le_bytes(*a))
             .collect();
-        return Ok(v);
+        Ok(v)
     }
 
     pub fn samples_cf32(self) -> Result<Vec<Complex32>, IQEngineError> {
@@ -55,7 +51,7 @@ impl SamplesB64 {
                 im: f2[1],
             })
             .collect();
-        return Ok(v);
+        Ok(v)
     }
 
     pub fn samples_ci16(self) -> Result<Vec<Complex<i16>>, IQEngineError> {
@@ -69,7 +65,7 @@ impl SamplesB64 {
                 im: f2[1],
             })
             .collect();
-        return Ok(v);
+        Ok(v)
     }
 
     pub fn samples_ci8(self) -> Result<Vec<Complex<i8>>, IQEngineError> {
@@ -83,7 +79,7 @@ impl SamplesB64 {
                 im: f2[1],
             })
             .collect();
-        return Ok(v);
+        Ok(v)
     }
 }
 
@@ -93,6 +89,12 @@ pub struct SamplesB64Builder {
     sample_rate: Option<f32>,
     center_freq: Option<f32>,
     error: Option<IQEngineError>,
+}
+
+impl Default for SamplesB64Builder {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl SamplesB64Builder {
@@ -120,10 +122,8 @@ impl SamplesB64Builder {
         self.data_type = Some(super::DataType::IqSlashCf32Le);
         let o = samples
             .iter()
-            .map(|x| [x.re(), x.im()])
-            .flatten()
-            .map(|x| f32::to_le_bytes(x))
-            .flatten();
+            .flat_map(|x| [x.re(), x.im()])
+            .flat_map(f32::to_le_bytes);
         let o: Vec<u8> = o.collect();
         let o = general_purpose::STANDARD.encode(o);
         self.samples = Some(o);
@@ -138,6 +138,13 @@ impl SamplesB64Builder {
         } else {
             self.error = Some(IQEngineError::IOError(content.unwrap_err()));
         }
+        self.data_type = Some(super::DataType::AudioSlashWav);
+        self
+    }
+
+    pub fn from_wav_data(mut self, samples: impl AsRef<[u8]>) -> Self {
+        let content = general_purpose::STANDARD.encode(samples);
+        self.samples = Some(content);
         self.data_type = Some(super::DataType::AudioSlashWav);
         self
     }
