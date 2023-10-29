@@ -27,3 +27,12 @@ where
         }
     }
 }
+
+impl<T> Default for FunctionPostRequest<T>
+where
+    T: Serialize,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}

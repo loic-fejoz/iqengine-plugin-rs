@@ -18,10 +18,20 @@ pub enum IQEngineError {
     IOError(std::io::Error),
     #[error("FutureSDR error")]
     FutureSDRError(anyhow::Error),
+    #[error("Hound error")]
+    HoundError(hound::Error),
+    #[error("")]
+    IntoInnerError(std::io::IntoInnerError<std::io::BufWriter<std::io::Cursor<Vec<u8>>>>),
 }
 
 impl From<anyhow::Error> for IQEngineError {
     fn from(value: anyhow::Error) -> Self {
         IQEngineError::FutureSDRError(value)
+    }
+}
+
+impl From<hound::Error> for IQEngineError {
+    fn from(value: hound::Error) -> Self {
+        IQEngineError::HoundError(value)
     }
 }
