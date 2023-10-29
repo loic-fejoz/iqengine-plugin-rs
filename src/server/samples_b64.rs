@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use base64::{
     alphabet,
     engine::{self, general_purpose},
@@ -90,6 +92,7 @@ pub struct SamplesB64Builder {
     data_type: Option<crate::server::DataType>,
     sample_rate: Option<f32>,
     center_freq: Option<f32>,
+    error: Option<IQEngineError>,
 }
 
 impl SamplesB64Builder {
@@ -99,6 +102,7 @@ impl SamplesB64Builder {
             data_type: None,
             sample_rate: None,
             center_freq: None,
+            error: None,
         }
     }
 
@@ -108,6 +112,7 @@ impl SamplesB64Builder {
             data_type: Some(samples.data_type),
             sample_rate: samples.sample_rate,
             center_freq: samples.center_freq,
+            error: None,
         }
     }
 
@@ -125,12 +130,27 @@ impl SamplesB64Builder {
         self
     }
 
-    pub fn build(self) -> SamplesB64 {
-        SamplesB64 {
+    pub fn from_wav_file(mut self, filename: &Path) -> Self {
+        let content = std::fs::read(filename);
+        if let Ok(content) = content {
+            let content = general_purpose::STANDARD.encode(content);
+            self.samples = Some(content);
+        } else {
+            self.error = Some(IQEngineError::IOError(content.unwrap_err()));
+        }
+        self.data_type = Some(super::DataType::AudioSlashWav);
+        self
+    }
+
+    pub fn build(self) -> Result<SamplesB64, IQEngineError> {
+        if self.error.is_some() {
+            return Err(self.error.unwrap());
+        }
+        Ok(SamplesB64 {
             samples: self.samples.unwrap(),
             center_freq: self.center_freq,
             data_type: self.data_type.unwrap(),
             sample_rate: self.sample_rate,
-        }
+        })
     }
 }

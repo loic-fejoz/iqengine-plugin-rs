@@ -14,4 +14,8 @@ pub enum IQEngineError {
     UnsupportedDataType(DataType),
     #[error("Mandatory parameter is missing")]
     MandatoryParameter(String),
+    #[error("File IO error")]
+    IOError(std::io::Error),
+    #[error("FutureSDR error")]
+    FutureSDRError(anyhow::Error),
 }
