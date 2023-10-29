@@ -18,10 +18,26 @@ pub enum IQEngineError {
     IOError(std::io::Error),
     #[error("FutureSDR error")]
     FutureSDRError(anyhow::Error),
+    #[error("Azure error")]
+    AzureError(azure_core::error::Error),
+    #[error("JSON De/Serialization error")]
+    SerdeJsonError(serde_json::Error),
 }
 
 impl From<anyhow::Error> for IQEngineError {
     fn from(value: anyhow::Error) -> Self {
         IQEngineError::FutureSDRError(value)
+    }
+}
+
+impl From<azure_core::error::Error> for IQEngineError {
+    fn from(value: azure_core::error::Error) -> Self {
+        IQEngineError::AzureError(value)
+    }
+}
+
+impl From<serde_json::Error> for IQEngineError {
+    fn from(value: serde_json::Error) -> Self {
+        IQEngineError::SerdeJsonError(value)
     }
 }
