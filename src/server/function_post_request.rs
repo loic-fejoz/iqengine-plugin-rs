@@ -11,10 +11,7 @@ where
     pub samples_b64: Option<Vec<SamplesB64>>,
     #[serde(rename = "samples_cloud", skip_serializing_if = "Option::is_none")]
     pub samples_cloud: Option<Vec<SamplesCloud>>,
-    #[serde(
-        rename = "custom_params",
-        skip_serializing_if = "Option::is_none",
-    )]
+    #[serde(rename = "custom_params", skip_serializing_if = "Option::is_none")]
     pub custom_params: Option<T>,
 }
 
@@ -28,5 +25,14 @@ where
             samples_cloud: None,
             custom_params: None,
         }
+    }
+}
+
+impl<T> Default for FunctionPostRequest<T>
+where
+    T: Serialize,
+{
+    fn default() -> Self {
+        Self::new()
     }
 }
