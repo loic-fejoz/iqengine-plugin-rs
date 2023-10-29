@@ -20,7 +20,7 @@ pub enum IQEngineError {
     FutureSDRError(anyhow::Error),
 }
 
-impl From<anyhow::Error>  for IQEngineError {
+impl From<anyhow::Error> for IQEngineError {
     fn from(value: anyhow::Error) -> Self {
         IQEngineError::FutureSDRError(value)
     }

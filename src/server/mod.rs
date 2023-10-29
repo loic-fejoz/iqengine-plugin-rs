@@ -32,5 +32,8 @@ where
     P: Serialize,
 {
     fn parameters(self) -> FunctionParameters;
-    async fn apply(self, request: FunctionPostRequest<P>) -> Result<FunctionPostResponse, IQEngineError>;
+    async fn apply(
+        self,
+        request: FunctionPostRequest<P>,
+    ) -> Result<FunctionPostResponse, IQEngineError>;
 }
