@@ -32,8 +32,8 @@ where
     P: Serialize,
 {
     fn parameters(self) -> FunctionParameters;
-    async fn apply(
+    fn apply(
         self,
         request: FunctionPostRequest<P>,
-    ) -> Result<FunctionPostResponse, IQEngineError>;
+    ) -> impl std::future::Future<Output = Result<FunctionPostResponse, IQEngineError>> + Send;
 }

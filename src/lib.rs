@@ -1,6 +1,6 @@
 #![feature(array_chunks)]
 #![feature(iter_array_chunks)]
-#![feature(async_fn_in_trait)]
+// #![feature(async_fn_in_trait)]
 
 #[macro_use]
 extern crate serde_derive;
