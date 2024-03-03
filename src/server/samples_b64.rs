@@ -149,6 +149,13 @@ impl SamplesB64Builder {
         self
     }
 
+    pub fn from_u8_data(mut self, samples: impl AsRef<[u8]>) -> Self {
+        let content = general_purpose::STANDARD.encode(samples);
+        self.samples = Some(content);
+        self.data_type = Some(super::DataType::ApplicationSlashOctetStream);
+        self
+    }
+
     pub fn build(self) -> Result<SamplesB64, IQEngineError> {
         if self.error.is_some() {
             return Err(self.error.unwrap());

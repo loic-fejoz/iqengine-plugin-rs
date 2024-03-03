@@ -10,19 +10,19 @@ pub enum IQEngineError {
     MissingIQError,
     #[error("Not yet implemented")]
     NotYetImplemented(String),
-    #[error("DataType is unsupported")]
+    #[error("DataType is unsupported: {0:?}")]
     UnsupportedDataType(DataType),
-    #[error("Mandatory parameter is missing")]
+    #[error("Mandatory parameter is missing: {0}")]
     MandatoryParameter(String),
-    #[error("File IO error")]
+    #[error("File IO error: {0}")]
     IOError(std::io::Error),
-    #[error("FutureSDR error")]
+    #[error("FutureSDR error: {0}")]
     FutureSDRError(anyhow::Error),
-    #[error("Azure error")]
+    #[error("Azure error: {0}")]
     AzureError(azure_core::error::Error),
-    #[error("JSON De/Serialization error")]
+    #[error("JSON De/Serialization error: {0}")]
     SerdeJsonError(serde_json::Error),
-    #[error("Hound error")]
+    #[error("Hound error: {0}")]
     HoundError(hound::Error),
 }
 
