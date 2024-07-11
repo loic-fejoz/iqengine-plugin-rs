@@ -1,7 +1,10 @@
-use super::SamplesB64;
+use super::{DataObject, SamplesB64};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FunctionPostResponse {
+    // ## Synchronous deprecated plugin
+    // #[deprecated]
+
     #[serde(rename = "data_output", skip_serializing_if = "Option::is_none")]
     pub data_output: Option<Vec<crate::server::SamplesB64>>,
     // #[serde(rename = "samples_cloud", skip_serializing_if = "Option::is_none")]
@@ -11,6 +14,11 @@ pub struct FunctionPostResponse {
     pub annotations: Option<Vec<crate::server::Annotation>>,
     #[serde(rename = "details", skip_serializing_if = "Option::is_none")]
     pub details: Option<String>,
+
+    // ## Asynchronous plugin
+
+    #[serde(rename = "non_iq_output_data", skip_serializing_if = "Option::is_none")]
+    pub non_iq_output_data: Option<DataObject>,
 }
 
 impl FunctionPostResponse {
@@ -19,6 +27,8 @@ impl FunctionPostResponse {
             data_output: None,
             annotations: None,
             details: None,
+
+            non_iq_output_data: None,
         }
     }
 }

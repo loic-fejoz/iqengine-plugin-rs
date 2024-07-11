@@ -1,9 +1,8 @@
 [package]
 name = "iqengine-plugin"
-version = "0.0.1"
-authors = ["OpenAPI Generator team and contributors", "Loïc Fejoz <loic@fejoz.net>"]
+version = "0.0.2"
+authors = ["Loïc Fejoz <loic@fejoz.net>"]
 description = "The plugins API is a unified open interface for managing the processing of RF recordings and corresponding dataflow, with the goal of standardizing inputs and outputs to RF processing functions for easy of interoperability and to combat vendor lockin. The plugins API is planned to be converted to an OpenAPI spec once its further refined.  It will use JSON for the fields. "
-# Override this license by providing a License Object in the OpenAPI.
 license = "Apache-2.0"
 edition = "2021"
 

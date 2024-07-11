@@ -36,3 +36,36 @@ where
         Self::new()
     }
 }
+
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct FunctionRequest1<T>
+where
+    T: Serialize,
+{
+    #[serde(rename = "samples", skip_serializing_if = "Option::is_none")]
+    pub samples: Option<Vec<u8>>,
+    #[serde(rename = "custom_params", skip_serializing_if = "Option::is_none")]
+    pub custom_params: Option<T>,
+}
+
+impl<T> FunctionRequest1<T>
+where
+    T: Serialize,
+{
+    pub fn new() -> FunctionRequest1<T> {
+        FunctionRequest1 {
+            samples: None,
+            custom_params: None,
+        }
+    }
+}
+
+impl<T> Default for FunctionRequest1<T>
+where
+    T: Serialize,
+{
+    fn default() -> Self {
+        Self::new()
+    }
+}
