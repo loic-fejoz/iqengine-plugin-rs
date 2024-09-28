@@ -3,7 +3,7 @@ use super::JobStatus;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct JobStatusResponse<I>
 where
-    I: ToString,
+    I: ToString + Send,
 {
     #[serde(flatten, skip_serializing_if = "Option::is_none")]
     value: Option<JobStatus<I>>,
@@ -14,7 +14,7 @@ where
 
 impl<I> JobStatusResponse<I>
 where
-    I: ToString,
+    I: ToString + Send,
 {
     pub fn not_found(_job_id: I) -> JobStatusResponse<I> {
         JobStatusResponse::<I> {
@@ -26,7 +26,7 @@ where
 
 impl<I> From<JobStatus<I>> for JobStatusResponse<I>
 where
-    I: ToString,
+    I: ToString + Send,
 {
     fn from(status: JobStatus<I>) -> Self {
         JobStatusResponse::<I> {

@@ -2,12 +2,13 @@ use std::io::BufWriter;
 use std::path::{Path, PathBuf};
 use std::{collections::HashMap, fs::File, io::BufReader};
 
-use super::{IQEngineError, JobStatus, FunctionOutput};
+use super::{FunctionOutput, IQEngineError, JobStatus};
 
 pub trait JobStorage<I>
 where
-    I: ToString,
+    I: ToString + Send,
 {
+    fn new_status(&mut self, job_id: I) -> Result<JobStatus<I>, IQEngineError>;
     fn job_status(&self, job_id: I) -> Result<JobStatus<I>, IQEngineError>;
     fn job_result(&self, job_id: I) -> Result<FunctionOutput<I>, IQEngineError>;
     fn set_status(
@@ -21,15 +22,15 @@ where
 
 pub struct InMemoryJobStorage<I>
 where
-    I: ToString
+    I: ToString + Send,
 {
     jobs: HashMap<String, JobStatus<I>>,
     results: HashMap<String, FunctionOutput<I>>,
 }
 
-impl <I> InMemoryJobStorage<I>
-where 
-    I: ToString
+impl<I> InMemoryJobStorage<I>
+where
+    I: ToString + Send,
 {
     pub fn new() -> InMemoryJobStorage<I> {
         InMemoryJobStorage {
@@ -39,10 +40,16 @@ where
     }
 }
 
-impl <T> JobStorage<T> for InMemoryJobStorage<T>
+impl<T> JobStorage<T> for InMemoryJobStorage<T>
 where
-    T: ToString + Clone
+    T: ToString + Clone + Send,
 {
+    fn new_status(&mut self, job_id: T) -> Result<JobStatus<T>, IQEngineError> {
+        let status = JobStatus::<T>::new(job_id.clone());
+        self.jobs.insert(job_id.to_string(), status.clone());
+        Ok(status)
+    }
+
     fn set_status(
         &mut self,
         job_id: T,
@@ -62,7 +69,8 @@ where
     }
 
     fn store_result(&mut self, job_id: T, result: FunctionOutput<T>) -> Result<(), IQEngineError> {
-        let _v = self.results.insert(job_id.to_string(), result);
+        let _v = self.results.insert(job_id.to_string(), result.clone());
+        self.jobs.insert(job_id.to_string(), result.job_status);
         Ok(())
     }
 
@@ -96,6 +104,16 @@ impl FileJobStorage {
         }
     }
 
+    pub fn init(&self) -> Result<(), IQEngineError> {
+        if !self.jobs_basedir.exists() {
+            std::fs::create_dir(self.jobs_basedir.clone())?;
+        }
+        if !self.results_basedir.exists() {
+            std::fs::create_dir(self.results_basedir.clone())?;
+        }
+        Ok(())
+    }
+
     fn job_filename(basedir: &Path, job_id: &str) -> PathBuf {
         basedir.join(job_id.to_string() + ".json")
     }
@@ -122,7 +140,7 @@ impl FileJobStorage {
     {
         let job_id = job_id.to_string();
         let filename = Self::job_filename(basedir, &job_id);
-        let file = File::open(filename);
+        let file = File::create(filename);
         if file.is_err() {
             return Err(IQEngineError::JobNotFound(job_id.to_string()));
         }
@@ -133,10 +151,16 @@ impl FileJobStorage {
     }
 }
 
-impl <T> JobStorage<T> for FileJobStorage
+impl<T> JobStorage<T> for FileJobStorage
 where
-    T: ToString + Clone + serde::ser::Serialize + serde::de::DeserializeOwned
+    T: ToString + Clone + serde::ser::Serialize + serde::de::DeserializeOwned + Send,
 {
+    fn new_status(&mut self, job_id: T) -> Result<JobStatus<T>, IQEngineError> {
+        let status = JobStatus::<T>::new(job_id.clone());
+        Self::to_file(&status, &self.jobs_basedir, job_id)?;
+        Ok(status)
+    }
+
     fn set_status(
         &mut self,
         job_id: T,
@@ -154,7 +178,8 @@ where
     }
 
     fn store_result(&mut self, job_id: T, result: FunctionOutput<T>) -> Result<(), IQEngineError> {
-        Self::to_file(&result, self.results_basedir.as_path(), job_id)?;
+        Self::to_file(&result, self.results_basedir.as_path(), job_id.clone())?;
+        Self::to_file(&result.job_status, &self.jobs_basedir, job_id)?;
         Ok(())
     }
 

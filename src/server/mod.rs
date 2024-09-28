@@ -27,6 +27,9 @@ pub use job_result_response::*;
 mod function_output;
 pub use function_output::FunctionOutput;
 
+mod metadata;
+pub use metadata::*;
+
 mod samples_b64;
 pub use samples_b64::{SamplesB64, SamplesB64Builder};
 

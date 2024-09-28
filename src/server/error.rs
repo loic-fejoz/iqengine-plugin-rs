@@ -51,3 +51,9 @@ impl From<serde_json::Error> for IQEngineError {
         IQEngineError::SerdeJsonError(value)
     }
 }
+
+impl From<std::io::Error> for IQEngineError {
+    fn from(value: std::io::Error) -> Self {
+        IQEngineError::IOError(value)
+    }
+}
