@@ -24,6 +24,8 @@ pub enum IQEngineError {
     SerdeJsonError(serde_json::Error),
     #[error("Hound error: {0}")]
     HoundError(hound::Error),
+    #[error("Generic error: {0}")]
+    GenericError(String),
 }
 
 impl From<anyhow::Error> for IQEngineError {

@@ -23,17 +23,17 @@ pub struct Annotation {
     pub core_colon_label: Option<String>,
     /// The number of samples that this Segment applies to.
     #[serde(rename = "core:sample_count")]
-    pub core_colon_sample_count: i32,
+    pub core_colon_sample_count: u64,
     /// The sample index at which this Segment takes effect
     #[serde(rename = "core:sample_start")]
-    pub core_colon_sample_start: i32,
+    pub core_colon_sample_start: u64,
     /// RFC-4122 unique identifier.
     #[serde(rename = "core:uuid", skip_serializing_if = "Option::is_none")]
     pub core_colon_uuid: Option<uuid::Uuid>,
 }
 
 impl Annotation {
-    pub fn new(core_colon_sample_count: i32, core_colon_sample_start: i32) -> Annotation {
+    pub fn new(core_colon_sample_count: u64, core_colon_sample_start: u64) -> Annotation {
         Annotation {
             core_colon_comment: None,
             core_colon_freq_lower_edge: None,

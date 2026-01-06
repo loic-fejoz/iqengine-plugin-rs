@@ -10,13 +10,31 @@ mod function_post_request;
 pub use function_post_request::FunctionPostRequest;
 
 mod function_post_response;
-pub use function_post_response::{FunctionPostResponse, FunctionPostResponseBuilder};
+pub use function_post_response::FunctionPostResponse;
 
-mod samples_b64;
-pub use samples_b64::{SamplesB64, SamplesB64Builder};
+mod job_status;
+pub use job_status::JobStatus;
 
-mod samples_cloud;
-pub use samples_cloud::SamplesCloud;
+mod job_store;
+pub use job_store::JobStore;
+
+mod orchestrator;
+pub use orchestrator::Orchestrator;
+
+mod server;
+pub use server::{PluginServer, configure_plugin};
+
+mod metadata_file;
+pub use metadata_file::MetadataFile;
+
+mod metadata_cloud;
+pub use metadata_cloud::MetadataCloud;
+
+mod data_object;
+pub use data_object::DataObject;
+
+mod output;
+pub use output::Output;
 
 mod data_type;
 pub use data_type::DataType;
@@ -29,11 +47,14 @@ use self::error::IQEngineError;
 
 pub trait IQFunction<P>
 where
-    P: Serialize,
+    P: Serialize + Send + Sync + 'static,
 {
-    fn parameters(self) -> FunctionParameters;
+    fn parameters(&self) -> FunctionParameters;
     fn apply(
-        self,
+        &self,
         request: FunctionPostRequest<P>,
-    ) -> impl std::future::Future<Output = Result<FunctionPostResponse, IQEngineError>> + Send;
+        samples: Vec<num_complex::Complex32>,
+        job_id: String,
+        job_store: std::sync::Arc<JobStore>,
+    ) -> impl std::future::Future<Output = Result<Output, IQEngineError>> + Send;
 }
