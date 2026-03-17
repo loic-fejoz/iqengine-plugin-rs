@@ -34,8 +34,8 @@ impl SamplesB64 {
     pub fn samples_f32(self) -> Result<Vec<f32>, IQEngineError> {
         let bytes = general_purpose::STANDARD.decode(self.samples)?;
         let v: Vec<f32> = bytes
-            .array_chunks::<4>()
-            .map(|a| f32::from_le_bytes(*a))
+            .chunks_exact(4)
+            .map(|a| f32::from_le_bytes(a.try_into().expect("msg")))
             .collect();
         Ok(v)
     }
@@ -43,12 +43,11 @@ impl SamplesB64 {
     pub fn samples_cf32(self) -> Result<Vec<Complex32>, IQEngineError> {
         let bytes = general_purpose::STANDARD.decode(self.samples)?;
         let v: Vec<Complex32> = bytes
-            .array_chunks::<4>()
-            .map(|a| f32::from_le_bytes(*a))
-            .array_chunks::<2>()
-            .map(|f2| Complex {
-                re: f2[0],
-                im: f2[1],
+            .chunks_exact(8)
+            .map(|a| {
+                let re = f32::from_le_bytes(a[0..4].try_into().expect("msg"));
+                let im = f32::from_le_bytes(a[4..8].try_into().expect("msg"));
+                Complex { re, im }
             })
             .collect();
         Ok(v)
@@ -57,12 +56,11 @@ impl SamplesB64 {
     pub fn samples_ci16(self) -> Result<Vec<Complex<i16>>, IQEngineError> {
         let bytes = general_purpose::STANDARD.decode(self.samples)?;
         let v: Vec<Complex<i16>> = bytes
-            .array_chunks::<2>()
-            .map(|a| i16::from_le_bytes(*a))
-            .array_chunks::<2>()
-            .map(|f2| Complex {
-                re: f2[0],
-                im: f2[1],
+            .chunks_exact(4)
+            .map(|a| {
+                let re = i16::from_le_bytes(a[0..2].try_into().expect("msg"));
+                let im = i16::from_le_bytes(a[2..4].try_into().expect("msg"));
+                Complex { re, im }
             })
             .collect();
         Ok(v)
@@ -71,12 +69,11 @@ impl SamplesB64 {
     pub fn samples_ci8(self) -> Result<Vec<Complex<i8>>, IQEngineError> {
         let bytes = general_purpose::STANDARD.decode(self.samples)?;
         let v: Vec<Complex<i8>> = bytes
-            .array_chunks::<1>()
-            .map(|a| i8::from_le_bytes(*a))
-            .array_chunks::<2>()
-            .map(|f2| Complex {
-                re: f2[0],
-                im: f2[1],
+            .chunks_exact(2)
+            .map(|a| {
+                let re = i8::from_le_bytes([a[0]]);
+                let im = i8::from_le_bytes([a[1]]);
+                Complex { re, im }
             })
             .collect();
         Ok(v)
